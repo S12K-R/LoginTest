@@ -14,6 +14,9 @@ typealias resultCallback = (Result<Decodable, Error>) -> Void
 class APIManager {
     
     
+    var isReachable: Bool {
+        return NetworkReachabilityManager()?.isReachable ?? false
+    }
     
     func request<T: Encodable, Q: Decodable>(container: URLCall, userParameters: T, responseModel: Q.Type, callback: @escaping resultCallback) {
         var headers: HTTPHeaders {
@@ -24,6 +27,11 @@ class APIManager {
             
         }
         
+        guard isReachable else {
+            let connectionFailure = ErrorBody(code: 400, message: "Please check your internet connection")
+            callback(Result.failure(connectionFailure))
+            return
+        }
         AF.request(container.baseUrl, method: container.method, parameters: userParameters, encoder: JSONParameterEncoder.default, headers: headers).response { response in
             debugPrint(response)
             switch response.result {

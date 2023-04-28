@@ -7,7 +7,7 @@
 
 import Foundation
 import UIKit
-import AlamofireNetworkActivityIndicator
+
 
 class LoginViewController: UIViewController {
     
